@@ -7,6 +7,10 @@ const appState = {
   filteredGames: [],
   currentStore: "",
   currentSort: "default",
+  currentPage: 0,
+  pageSize: 12,
+  isSearchMode: false,
+  searchTerm: "",
 };
 
 // Elementos del DOM
@@ -23,6 +27,8 @@ const elements = {
   gameModal: null,
   closeModal: null,
   modalContent: null,
+  loadMoreBtn: null,
+  loadMoreContainer: null,
 };
 
 // Inicialización
@@ -47,6 +53,8 @@ function initializeElements() {
   elements.gameModal = document.getElementById("gameModal");
   elements.closeModal = document.getElementById("closeModal");
   elements.modalContent = document.getElementById("modalContent");
+  elements.loadMoreBtn = document.getElementById("loadMoreBtn");
+  elements.loadMoreContainer = document.getElementById("loadMoreContainer");
 }
 
 // Adjuntar event listeners
@@ -62,16 +70,19 @@ function attachEventListeners() {
   elements.gameModal.addEventListener("click", (e) => {
     if (e.target === elements.gameModal) closeModal();
   });
+  elements.loadMoreBtn.addEventListener("click", loadMoreGames);
 }
 
 // Cargar juegos iniciales
 async function loadInitialGames() {
   showLoading(true);
   hideError();
+  appState.currentPage = 0;
+  appState.isSearchMode = false;
 
   try {
     const response = await fetch(
-      "https://www.cheapshark.com/api/1.0/deals?storeID=1&pageSize=20"
+      `https://www.cheapshark.com/api/1.0/deals?storeID=1&pageSize=60`
     );
 
     if (!response.ok) {
@@ -81,7 +92,9 @@ async function loadInitialGames() {
     const data = await response.json();
     appState.allGames = data;
     appState.filteredGames = [...data];
+    appState.currentPage = 0;
     renderGames(appState.filteredGames);
+    updateLoadMoreButton();
     showLoading(false);
   } catch (error) {
     console.error("Error:", error);
@@ -101,12 +114,15 @@ async function handleSearch() {
 
   showLoading(true);
   hideError();
+  appState.isSearchMode = true;
+  appState.searchTerm = searchTerm;
+  appState.currentPage = 0;
 
   try {
     const response = await fetch(
       `https://www.cheapshark.com/api/1.0/games?title=${encodeURIComponent(
         searchTerm
-      )}&limit=20`
+      )}&limit=60`
     );
 
     if (!response.ok) {
@@ -128,6 +144,7 @@ async function handleSearch() {
 
     appState.allGames = transformedData;
     appState.filteredGames = [...transformedData];
+    appState.currentPage = 0;
     applyFiltersAndSort();
     showLoading(false);
   } catch (error) {
@@ -156,6 +173,7 @@ function handleReset() {
   elements.priceSort.value = "default";
   appState.currentStore = "";
   appState.currentSort = "default";
+  appState.currentPage = 0;
   loadInitialGames();
 }
 
@@ -178,24 +196,36 @@ function applyFiltersAndSort() {
   }
 
   appState.filteredGames = filtered;
+  appState.currentPage = 0;
   renderGames(filtered);
+  updateLoadMoreButton();
 }
 
 // Renderizar juegos en el grid
-function renderGames(games) {
-  elements.gamesGrid.innerHTML = "";
+function renderGames(games, append = false) {
+  if (!append) {
+    elements.gamesGrid.innerHTML = "";
+    appState.currentPage = 0;
+  }
 
-  if (games.length === 0) {
+  if (games.length === 0 && !append) {
     elements.noResults.classList.remove("hidden");
+    elements.loadMoreContainer.classList.add("hidden");
     return;
   }
 
   elements.noResults.classList.add("hidden");
 
-  games.forEach((game) => {
+  const startIndex = appState.currentPage * appState.pageSize;
+  const endIndex = startIndex + appState.pageSize;
+  const gamesToShow = games.slice(startIndex, endIndex);
+
+  gamesToShow.forEach((game) => {
     const card = createGameCard(game);
     elements.gamesGrid.appendChild(card);
   });
+
+  updateLoadMoreButton();
 }
 
 // Crear tarjeta de juego
@@ -412,4 +442,24 @@ function showError() {
 // Ocultar error
 function hideError() {
   elements.errorMessage.classList.add("hidden");
+}
+
+// Cargar más juegos
+function loadMoreGames() {
+  appState.currentPage++;
+  renderGames(appState.filteredGames, true);
+}
+
+// Actualizar botón "Ver más"
+function updateLoadMoreButton() {
+  const totalGames = appState.filteredGames.length;
+  const shownGames = (appState.currentPage + 1) * appState.pageSize;
+
+  if (shownGames >= totalGames) {
+    elements.loadMoreContainer.classList.add("hidden");
+  } else {
+    elements.loadMoreContainer.classList.remove("hidden");
+    const remainingGames = totalGames - shownGames;
+    elements.loadMoreBtn.textContent = `Ver más juegos (${remainingGames} restantes)`;
+  }
 }
