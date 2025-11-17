@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Proyecto con Tailwind CSS v4.1",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "build:css": "tailwindcss -i ./src/input.css -o ./public/output.css",
     "watch:css": "tailwindcss -i ./src/input.css -o ./public/output.css --watch",
@@ -16,6 +17,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "tailwindcss": "^4.1.0"
+    "@tailwindcss/cli": "^4.0.0-alpha.25"
   }
 }

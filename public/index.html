@@ -3,86 +3,179 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Mi Proyecto</title>
+    <title>Ecuador Games - Las Mejores Ofertas en Videojuegos</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
     <link rel="stylesheet" href="output.css" />
   </head>
-  <body class="bg-gray-50">
+  <body
+    class="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen"
+  >
     <!-- Header -->
-    <header class="bg-white shadow-md">
-      <nav class="container mx-auto px-6 py-4">
-        <div class="flex items-center justify-between">
-          <h1 class="text-2xl font-bold text-gray-800">Mi Proyecto</h1>
-          <ul class="flex space-x-6">
-            <li>
-              <a href="#" class="text-gray-600 hover:text-gray-900 transition"
-                >Inicio</a
-              >
-            </li>
-            <li>
-              <a href="#" class="text-gray-600 hover:text-gray-900 transition"
-                >Acerca de</a
-              >
-            </li>
-            <li>
-              <a href="#" class="text-gray-600 hover:text-gray-900 transition"
-                >Contacto</a
-              >
-            </li>
-          </ul>
+    <header class="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-2xl">
+      <div class="container mx-auto px-4 sm:px-6 py-6">
+        <div class="text-center">
+          <h1
+            class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2"
+          >
+            Ecuador Games
+          </h1>
+          <p class="text-indigo-100 text-sm sm:text-base">
+            Descubre las mejores ofertas en videojuegos
+          </p>
         </div>
-      </nav>
+      </div>
     </header>
 
-    <!-- Main Content -->
-    <main class="container mx-auto px-6 py-12">
-      <section class="text-center mb-12">
-        <h2 class="text-4xl font-bold text-gray-800 mb-4">
-          Bienvenido a Mi Proyecto
-        </h2>
-        <p class="text-lg text-gray-600 max-w-2xl mx-auto">
-          Esta es una página base con Tailwind CSS configurado. Personalízala
-          según tus necesidades.
-        </p>
-      </section>
+    <!-- Search and Filters -->
+    <section class="container mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <!-- Search Bar -->
+      <div class="mb-6">
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="flex-1 relative">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Buscar videojuegos..."
+              class="w-full px-4 py-3 rounded-lg border-2 border-indigo-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition"
+            />
+          </div>
+          <button
+            id="searchBtn"
+            class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-lg hover:shadow-xl"
+          >
+            Buscar
+          </button>
+        </div>
+      </div>
 
-      <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div
-          class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition"
-        >
-          <h3 class="text-xl font-semibold text-gray-800 mb-3">
-            Característica 1
-          </h3>
-          <p class="text-gray-600">
-            Descripción de la primera característica de tu proyecto.
+      <!-- Filters -->
+      <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-white font-semibold mb-2">
+              Filtrar por tienda:
+            </label>
+            <select
+              id="storeFilter"
+              class="w-full px-4 py-2 rounded-lg border-2 border-indigo-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white"
+            >
+              <option value="">Todas las tiendas</option>
+              <option value="1">Steam</option>
+              <option value="2">GamersGate</option>
+              <option value="3">GreenManGaming</option>
+              <option value="7">GOG</option>
+              <option value="8">Origin</option>
+              <option value="25">Epic Games Store</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-white font-semibold mb-2">
+              Ordenar por precio:
+            </label>
+            <select
+              id="priceSort"
+              class="w-full px-4 py-2 rounded-lg border-2 border-indigo-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white"
+            >
+              <option value="default">Por defecto</option>
+              <option value="asc">Menor a mayor</option>
+              <option value="desc">Mayor a menor</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2 lg:col-span-1">
+            <label class="block text-white font-semibold mb-2">
+              Filtros rápidos:
+            </label>
+            <button
+              id="resetBtn"
+              class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-lg transition duration-200"
+            >
+              Restablecer filtros
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading Spinner -->
+    <div id="loadingSpinner" class="hidden">
+      <div class="container mx-auto px-4 sm:px-6">
+        <div class="flex flex-col items-center justify-center py-12">
+          <div
+            class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-500 mb-4"
+          ></div>
+          <p class="text-white text-xl font-semibold">
+            Cargando videojuegos...
           </p>
         </div>
+      </div>
+    </div>
+
+    <!-- Error Message -->
+    <div id="errorMessage" class="hidden">
+      <div class="container mx-auto px-4 sm:px-6">
         <div
-          class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition"
+          class="bg-red-500/20 border-2 border-red-500 rounded-lg p-6 backdrop-blur-sm"
         >
-          <h3 class="text-xl font-semibold text-gray-800 mb-3">
-            Característica 2
-          </h3>
-          <p class="text-gray-600">
-            Descripción de la segunda característica de tu proyecto.
+          <p class="text-red-200 text-center text-lg font-semibold">
+            Error al cargar los videojuegos. Por favor, intenta nuevamente.
           </p>
         </div>
-        <div
-          class="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition"
-        >
-          <h3 class="text-xl font-semibold text-gray-800 mb-3">
-            Característica 3
-          </h3>
-          <p class="text-gray-600">
-            Descripción de la tercera característica de tu proyecto.
-          </p>
-        </div>
-      </section>
+      </div>
+    </div>
+
+    <!-- Games Grid -->
+    <main class="container mx-auto px-4 sm:px-6 pb-12">
+      <div
+        id="gamesGrid"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+      >
+        <!-- Las tarjetas de juegos se generarán dinámicamente aquí -->
+      </div>
+
+      <!-- No Results Message -->
+      <div id="noResults" class="hidden text-center py-12">
+        <p class="text-white text-xl font-semibold">
+          No se encontraron resultados
+        </p>
+      </div>
     </main>
 
+    <!-- Modal de Detalle -->
+    <div
+      id="gameModal"
+      class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    >
+      <div
+        class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+      >
+        <div class="relative">
+          <!-- Close Button -->
+          <button
+            id="closeModal"
+            class="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl font-bold transition z-10"
+          >
+            ×
+          </button>
+
+          <!-- Modal Content -->
+          <div id="modalContent">
+            <!-- El contenido del modal se generará dinámicamente -->
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white mt-12">
-      <div class="container mx-auto px-6 py-8 text-center">
-        <p>&copy; 2025 Mi Proyecto. Todos los derechos reservados.</p>
+    <footer
+      class="bg-gray-900/50 backdrop-blur-sm text-white mt-12 border-t border-purple-500/30"
+    >
+      <div class="container mx-auto px-4 sm:px-6 py-6 text-center">
+        <p class="text-sm sm:text-base">
+          &copy; 2025 Ecuador Games. Las mejores ofertas en videojuegos.
+        </p>
+        <p class="text-xs text-gray-400 mt-2">Powered by CheapShark API</p>
       </div>
     </footer>
 
