@@ -316,7 +316,7 @@ function createGameCard(game) {
       }
     </div>
     <div class="p-4">
-      <h3 class="font-bold text-lg text-gray-800 mb-2 line-clamp-2 min-h-[3.5rem]">
+      <h3 class="font-bold text-lg text-[#4b004c] mb-2 line-clamp-2 min-h-[3.5rem]">
         ${game.title}
       </h3>
       <div class="flex items-center justify-between mb-3">
@@ -336,7 +336,7 @@ function createGameCard(game) {
         </div>
       </div>
       <button 
-        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
+        class="w-full bg-[#e63c80] hover:bg-[#c70452] text-white font-semibold py-2 px-4 rounded-lg transition duration-200"
         onclick="showGameDetail('${game.gameID || game.dealID}')"
       >
         Ver detalle
