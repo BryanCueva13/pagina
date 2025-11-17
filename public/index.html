@@ -65,7 +65,14 @@
               <option value="3">GreenManGaming</option>
               <option value="7">GOG</option>
               <option value="8">Origin</option>
+              <option value="11">Humble Store</option>
+              <option value="13">Uplay</option>
+              <option value="15">Fanatical</option>
+              <option value="21">WinGameStore</option>
+              <option value="23">GameBillet</option>
               <option value="25">Epic Games Store</option>
+              <option value="27">Gamesplanet</option>
+              <option value="28">Voidu</option>
             </select>
           </div>
 
@@ -78,8 +85,11 @@
               class="w-full px-4 py-2 rounded-lg border-2 border-indigo-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white"
             >
               <option value="default">Por defecto</option>
-              <option value="asc">Menor a mayor</option>
-              <option value="desc">Mayor a menor</option>
+              <option value="sale-asc">Precio oferta: Menor a mayor</option>
+              <option value="sale-desc">Precio oferta: Mayor a menor</option>
+              <option value="normal-asc">Precio normal: Menor a mayor</option>
+              <option value="normal-desc">Precio normal: Mayor a menor</option>
+              <option value="discount">Mayor descuento</option>
             </select>
           </div>
 
@@ -97,6 +107,13 @@
         </div>
       </div>
     </section>
+
+    <!-- Results Counter -->
+    <div class="container mx-auto px-4 sm:px-6 pb-4">
+      <div id="resultsCounter" class="text-white text-center font-semibold hidden">
+        <p id="resultsText"></p>
+      </div>
+    </div>
 
     <!-- Loading Spinner -->
     <div id="loadingSpinner" class="hidden">

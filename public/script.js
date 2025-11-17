@@ -29,6 +29,8 @@ const elements = {
   modalContent: null,
   loadMoreBtn: null,
   loadMoreContainer: null,
+  resultsCounter: null,
+  resultsText: null,
 };
 
 // Inicialización
@@ -55,6 +57,8 @@ function initializeElements() {
   elements.modalContent = document.getElementById("modalContent");
   elements.loadMoreBtn = document.getElementById("loadMoreBtn");
   elements.loadMoreContainer = document.getElementById("loadMoreContainer");
+  elements.resultsCounter = document.getElementById("resultsCounter");
+  elements.resultsText = document.getElementById("resultsText");
 }
 
 // Adjuntar event listeners
@@ -189,10 +193,42 @@ function applyFiltersAndSort() {
   }
 
   // Ordenar por precio
-  if (appState.currentSort === "asc") {
-    filtered.sort((a, b) => parseFloat(a.salePrice) - parseFloat(b.salePrice));
-  } else if (appState.currentSort === "desc") {
-    filtered.sort((a, b) => parseFloat(b.salePrice) - parseFloat(a.salePrice));
+  switch (appState.currentSort) {
+    case "sale-asc":
+      // Precio de oferta: menor a mayor
+      filtered.sort((a, b) => parseFloat(a.salePrice) - parseFloat(b.salePrice));
+      break;
+    case "sale-desc":
+      // Precio de oferta: mayor a menor
+      filtered.sort((a, b) => parseFloat(b.salePrice) - parseFloat(a.salePrice));
+      break;
+    case "normal-asc":
+      // Precio normal: menor a mayor
+      filtered.sort((a, b) => {
+        const priceA = parseFloat(a.normalPrice || a.salePrice);
+        const priceB = parseFloat(b.normalPrice || b.salePrice);
+        return priceA - priceB;
+      });
+      break;
+    case "normal-desc":
+      // Precio normal: mayor a menor
+      filtered.sort((a, b) => {
+        const priceA = parseFloat(a.normalPrice || a.salePrice);
+        const priceB = parseFloat(b.normalPrice || b.salePrice);
+        return priceB - priceA;
+      });
+      break;
+    case "discount":
+      // Mayor descuento
+      filtered.sort((a, b) => {
+        const discountA = parseFloat(a.savings || 0);
+        const discountB = parseFloat(b.savings || 0);
+        return discountB - discountA;
+      });
+      break;
+    default:
+      // Por defecto, no ordenar
+      break;
   }
 
   appState.filteredGames = filtered;
@@ -407,12 +443,19 @@ function renderGameDetail(game) {
 // Obtener nombre de la tienda
 function getStoreName(storeID) {
   const stores = {
-    1: "Steam",
-    2: "GamersGate",
-    3: "GreenManGaming",
-    7: "GOG",
-    8: "Origin",
-    25: "Epic Games Store",
+    "1": "Steam",
+    "2": "GamersGate",
+    "3": "GreenManGaming",
+    "7": "GOG",
+    "8": "Origin",
+    "11": "Humble Store",
+    "13": "Uplay",
+    "15": "Fanatical",
+    "21": "WinGameStore",
+    "23": "GameBillet",
+    "25": "Epic Games Store",
+    "27": "Gamesplanet",
+    "28": "Voidu",
   };
   return stores[storeID] || "Tienda desconocida";
 }
@@ -455,6 +498,25 @@ function updateLoadMoreButton() {
   const totalGames = appState.filteredGames.length;
   const shownGames = (appState.currentPage + 1) * appState.pageSize;
 
+  // Actualizar contador de resultados
+  if (totalGames > 0) {
+    elements.resultsCounter.classList.remove("hidden");
+    const activeFilters = [];
+    if (appState.currentStore) {
+      activeFilters.push(`Tienda: ${getStoreName(appState.currentStore)}`);
+    }
+    if (appState.currentSort !== "default") {
+      activeFilters.push("Ordenado");
+    }
+    
+    const filterText = activeFilters.length > 0 ? ` (${activeFilters.join(", ")})` : "";
+    const displayedCount = Math.min(shownGames, totalGames);
+    elements.resultsText.textContent = `Mostrando ${displayedCount} de ${totalGames} videojuegos${filterText}`;
+  } else {
+    elements.resultsCounter.classList.add("hidden");
+  }
+
+  // Actualizar botón "Ver más"
   if (shownGames >= totalGames) {
     elements.loadMoreContainer.classList.add("hidden");
   } else {
