@@ -8,18 +8,20 @@
     <link rel="stylesheet" href="output.css" />
   </head>
   <body
-    class="bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 min-h-screen"
+    class="bg-gradient-to-br from-slate-950 via-blue-950 to-slate-950 min-h-screen"
   >
     <!-- Header -->
-    <header class="bg-gradient-to-r from-indigo-600 to-purple-600 shadow-2xl">
+    <header
+      class="bg-gradient-to-r from-cyan-500 via-blue-600 to-purple-600 shadow-2xl border-b-2 border-cyan-400/30"
+    >
       <div class="container mx-auto px-4 sm:px-6 py-6">
         <div class="text-center">
           <h1
-            class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2"
+            class="text-3xl sm:text-4xl md:text-5xl font-extrabold text-white mb-2 drop-shadow-[0_0_15px_rgba(0,255,255,0.5)]"
           >
             Ecuador Games
           </h1>
-          <p class="text-indigo-100 text-sm sm:text-base">
+          <p class="text-cyan-100 text-sm sm:text-base font-semibold">
             Descubre las mejores ofertas en videojuegos
           </p>
         </div>
@@ -36,12 +38,12 @@
               type="text"
               id="searchInput"
               placeholder="Buscar videojuegos..."
-              class="w-full px-4 py-3 rounded-lg border-2 border-indigo-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 transition"
+              class="w-full px-4 py-3 rounded-lg border-2 border-[#e63c80]/50 bg-[#4b004c]/50 text-white placeholder-[#e0d1ed] focus:border-[#e63c80] focus:outline-none focus:ring-2 focus:ring-[#e63c80]/50 focus:bg-[#4b004c] transition backdrop-blur-sm"
             />
           </div>
           <button
             id="searchBtn"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold px-6 py-3 rounded-lg transition duration-200 shadow-lg hover:shadow-xl"
+            class="bg-gradient-to-r from-[#e63c80] to-[#c70452] hover:from-[#f0b9cf] hover:to-[#e63c80] text-white font-bold px-6 py-3 rounded-lg transition duration-200 shadow-lg shadow-[#e63c80]/50 hover:shadow-xl hover:shadow-[#f0b9cf]/50 hover:scale-105"
           >
             Buscar
           </button>
@@ -49,15 +51,17 @@
       </div>
 
       <!-- Filters -->
-      <div class="bg-white/10 backdrop-blur-sm rounded-lg p-4 mb-6">
+      <div
+        class="bg-gradient-to-r from-[#4b004c]/80 to-[#c70452]/30 backdrop-blur-md rounded-xl p-4 mb-6 border border-[#e63c80]/30 shadow-lg shadow-[#e63c80]/10"
+      >
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           <div>
-            <label class="block text-white font-semibold mb-2">
+            <label class="block text-[#f0b9cf] font-bold mb-2">
               Filtrar por tienda:
             </label>
             <select
               id="storeFilter"
-              class="w-full px-4 py-2 rounded-lg border-2 border-indigo-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white"
+              class="w-full px-4 py-2 rounded-lg border-2 border-[#e63c80]/50 focus:border-[#e63c80] focus:outline-none focus:ring-2 focus:ring-[#e63c80]/50 bg-[#4b004c] text-white transition"
             >
               <option value="">Todas las tiendas</option>
               <option value="1">Steam</option>
@@ -77,12 +81,12 @@
           </div>
 
           <div>
-            <label class="block text-white font-semibold mb-2">
+            <label class="block text-[#f0b9cf] font-bold mb-2">
               Ordenar por precio:
             </label>
             <select
               id="priceSort"
-              class="w-full px-4 py-2 rounded-lg border-2 border-indigo-300 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 bg-white"
+              class="w-full px-4 py-2 rounded-lg border-2 border-[#e63c80]/50 focus:border-[#e63c80] focus:outline-none focus:ring-2 focus:ring-[#e63c80]/50 bg-[#4b004c] text-white transition"
             >
               <option value="default">Por defecto</option>
               <option value="sale-asc">Precio oferta: Menor a mayor</option>
@@ -94,12 +98,12 @@
           </div>
 
           <div class="sm:col-span-2 lg:col-span-1">
-            <label class="block text-white font-semibold mb-2">
+            <label class="block text-[#f0b9cf] font-bold mb-2">
               Filtros rápidos:
             </label>
             <button
               id="resetBtn"
-              class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-lg transition duration-200"
+              class="w-full bg-gradient-to-r from-[#c70452] to-[#e63c80] hover:from-[#e63c80] hover:to-[#f0b9cf] text-white font-bold px-4 py-2 rounded-lg transition duration-200 shadow-lg shadow-[#e63c80]/30 hover:shadow-[#f0b9cf]/50 hover:scale-105"
             >
               Restablecer filtros
             </button>
@@ -110,7 +114,10 @@
 
     <!-- Results Counter -->
     <div class="container mx-auto px-4 sm:px-6 pb-4">
-      <div id="resultsCounter" class="text-white text-center font-semibold hidden">
+      <div
+        id="resultsCounter"
+        class="text-white text-center font-semibold hidden"
+      >
         <p id="resultsText"></p>
       </div>
     </div>
@@ -119,12 +126,23 @@
     <div id="loadingSpinner" class="hidden">
       <div class="container mx-auto px-4 sm:px-6">
         <div class="flex flex-col items-center justify-center py-12">
-          <div
-            class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-500 mb-4"
-          ></div>
-          <p class="text-white text-xl font-semibold">
+          <div class="relative">
+            <div
+              class="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-cyan-400 mb-4"
+            ></div>
+            <div
+              class="animate-spin rounded-full h-20 w-20 border-t-4 border-b-4 border-purple-500 mb-4 absolute top-0 left-0"
+              style="animation-direction: reverse; animation-duration: 1.5s"
+            ></div>
+          </div>
+          <p class="text-cyan-300 text-xl font-bold animate-pulse mt-4">
             Cargando videojuegos...
           </p>
+          <div class="mt-4 w-64 h-2 bg-slate-700 rounded-full overflow-hidden">
+            <div
+              class="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-pulse"
+            ></div>
+          </div>
         </div>
       </div>
     </div>
@@ -133,11 +151,30 @@
     <div id="errorMessage" class="hidden">
       <div class="container mx-auto px-4 sm:px-6">
         <div
-          class="bg-red-500/20 border-2 border-red-500 rounded-lg p-6 backdrop-blur-sm"
+          class="bg-gradient-to-r from-red-900/50 to-red-800/50 border-2 border-red-500 rounded-xl p-6 backdrop-blur-md shadow-lg shadow-red-500/30 animate-pulse"
         >
-          <p class="text-red-200 text-center text-lg font-semibold">
-            Error al cargar los videojuegos. Por favor, intenta nuevamente.
-          </p>
+          <div class="flex items-center justify-center gap-3">
+            <svg
+              class="w-8 h-8 text-red-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              ></path>
+            </svg>
+            <p class="text-red-200 text-center text-lg font-bold">
+              Error al cargar los videojuegos. Por favor, intenta nuevamente.
+            </p>
+          </div>
+          <p
+            id="errorDetails"
+            class="text-red-300 text-center text-sm mt-2"
+          ></p>
         </div>
       </div>
     </div>
@@ -162,7 +199,7 @@
       <div id="loadMoreContainer" class="hidden mt-8 text-center">
         <button
           id="loadMoreBtn"
-          class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold px-8 py-4 rounded-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition duration-300"
+          class="bg-gradient-to-r from-[#e63c80] via-[#c70452] to-[#4b004c] hover:from-[#f0b9cf] hover:via-[#e63c80] hover:to-[#c70452] text-white font-bold px-8 py-4 rounded-xl shadow-xl shadow-[#e63c80]/30 hover:shadow-2xl hover:shadow-[#f0b9cf]/50 transform hover:scale-110 transition duration-300 border border-[#e63c80]/30"
         >
           Ver más juegos
         </button>
@@ -172,16 +209,16 @@
     <!-- Modal de Detalle -->
     <div
       id="gameModal"
-      class="hidden fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4"
     >
       <div
-        class="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+        class="bg-gradient-to-br from-[#4b004c] to-[#c70452] rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border-2 border-[#e63c80]/30 shadow-[#e63c80]/20"
       >
         <div class="relative">
           <!-- Close Button -->
           <button
             id="closeModal"
-            class="absolute top-4 right-4 bg-red-500 hover:bg-red-600 text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl font-bold transition z-10"
+            class="absolute top-4 right-4 bg-gradient-to-r from-[#c70452] to-[#e63c80] hover:from-[#e63c80] hover:to-[#f0b9cf] text-white rounded-full w-10 h-10 flex items-center justify-center text-2xl font-bold transition z-10 shadow-lg hover:shadow-[#e63c80]/50 hover:scale-110"
           >
             ×
           </button>
@@ -196,13 +233,13 @@
 
     <!-- Footer -->
     <footer
-      class="bg-gray-900/50 backdrop-blur-sm text-white mt-12 border-t border-purple-500/30"
+      class="bg-gradient-to-r from-[#4b004c] to-[#c70452] backdrop-blur-sm text-white mt-12 border-t-2 border-[#e63c80]/30 shadow-[0_-10px_30px_rgba(230,60,128,0.1)]"
     >
       <div class="container mx-auto px-4 sm:px-6 py-6 text-center">
-        <p class="text-sm sm:text-base">
+        <p class="text-sm sm:text-base text-[#f0b9cf] font-semibold">
           &copy; 2025 Ecuador Games. Las mejores ofertas en videojuegos.
         </p>
-        <p class="text-xs text-gray-400 mt-2">Powered by CheapShark API</p>
+        <p class="text-xs text-[#e0d1ed]/70 mt-2">Powered by CheapShark API</p>
       </div>
     </footer>
 

@@ -23,6 +23,7 @@ const elements = {
   gamesGrid: null,
   loadingSpinner: null,
   errorMessage: null,
+  errorDetails: null,
   noResults: null,
   gameModal: null,
   closeModal: null,
@@ -51,6 +52,7 @@ function initializeElements() {
   elements.gamesGrid = document.getElementById("gamesGrid");
   elements.loadingSpinner = document.getElementById("loadingSpinner");
   elements.errorMessage = document.getElementById("errorMessage");
+  elements.errorDetails = document.getElementById("errorDetails");
   elements.noResults = document.getElementById("noResults");
   elements.gameModal = document.getElementById("gameModal");
   elements.closeModal = document.getElementById("closeModal");
@@ -90,10 +92,15 @@ async function loadInitialGames() {
     );
 
     if (!response.ok) {
-      throw new Error("Error al cargar los juegos");
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
+
+    if (!data || data.length === 0) {
+      throw new Error("No se recibieron datos de la API");
+    }
+
     appState.allGames = data;
     appState.filteredGames = [...data];
     appState.currentPage = 0;
@@ -101,8 +108,8 @@ async function loadInitialGames() {
     updateLoadMoreButton();
     showLoading(false);
   } catch (error) {
-    console.error("Error:", error);
-    showError();
+    console.error("Error al cargar juegos iniciales:", error);
+    showError(error.message || "Error desconocido al cargar los videojuegos");
     showLoading(false);
   }
 }
@@ -130,10 +137,20 @@ async function handleSearch() {
     );
 
     if (!response.ok) {
-      throw new Error("Error en la búsqueda");
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     const data = await response.json();
+
+    if (!data || data.length === 0) {
+      // No es un error, simplemente no hay resultados
+      appState.allGames = [];
+      appState.filteredGames = [];
+      appState.currentPage = 0;
+      renderGames([]);
+      showLoading(false);
+      return;
+    }
 
     // Transformar los datos de búsqueda al formato de deals
     const transformedData = data.map((game) => ({
@@ -152,8 +169,8 @@ async function handleSearch() {
     applyFiltersAndSort();
     showLoading(false);
   } catch (error) {
-    console.error("Error:", error);
-    showError();
+    console.error("Error en la búsqueda:", error);
+    showError(error.message || "Error al realizar la búsqueda");
     showLoading(false);
   }
 }
@@ -196,11 +213,15 @@ function applyFiltersAndSort() {
   switch (appState.currentSort) {
     case "sale-asc":
       // Precio de oferta: menor a mayor
-      filtered.sort((a, b) => parseFloat(a.salePrice) - parseFloat(b.salePrice));
+      filtered.sort(
+        (a, b) => parseFloat(a.salePrice) - parseFloat(b.salePrice)
+      );
       break;
     case "sale-desc":
       // Precio de oferta: mayor a menor
-      filtered.sort((a, b) => parseFloat(b.salePrice) - parseFloat(a.salePrice));
+      filtered.sort(
+        (a, b) => parseFloat(b.salePrice) - parseFloat(a.salePrice)
+      );
       break;
     case "normal-asc":
       // Precio normal: menor a mayor
@@ -330,7 +351,7 @@ function createGameCard(game) {
 async function showGameDetail(gameID) {
   elements.gameModal.classList.remove("hidden");
   elements.modalContent.innerHTML =
-    '<div class="p-8 text-center"><div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-indigo-500 mx-auto"></div><p class="mt-4 text-gray-600">Cargando detalles...</p></div>';
+    '<div class="p-8 text-center"><div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-[#e63c80] mx-auto"></div><p class="mt-4 text-[#f0b9cf]">Cargando detalles...</p></div>';
 
   try {
     // Buscar el juego en nuestro estado
@@ -342,12 +363,12 @@ async function showGameDetail(gameID) {
       renderGameDetail(game);
     } else {
       elements.modalContent.innerHTML =
-        '<div class="p-8 text-center text-red-600">No se pudo cargar el detalle del juego.</div>';
+        '<div class="p-8 text-center text-[#f0b9cf]">No se pudo cargar el detalle del juego.</div>';
     }
   } catch (error) {
-    console.error("Error:", error);
+    console.error("Error al mostrar detalle:", error);
     elements.modalContent.innerHTML =
-      '<div class="p-8 text-center text-red-600">Error al cargar los detalles.</div>';
+      '<div class="p-8 text-center text-[#f0b9cf]">Error al cargar los detalles.</div>';
   }
 }
 
@@ -364,30 +385,30 @@ function renderGameDetail(game) {
         game.thumb || "https://via.placeholder.com/600x300?text=No+Image"
       }" 
       alt="${game.title}"
-      class="w-full h-64 object-cover"
+      class="w-full h-64 object-cover border-b-2 border-[#e63c80]/30"
       onerror="this.src='https://via.placeholder.com/600x300?text=No+Image'"
     />
     <div class="p-6 sm:p-8">
-      <h2 class="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+      <h2 class="text-2xl sm:text-3xl font-bold text-[#f0b9cf] mb-4 drop-shadow-[0_0_10px_rgba(240,185,207,0.3)]">
         ${game.title}
       </h2>
       
-      <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4 sm:p-6 mb-6">
+      <div class="bg-gradient-to-r from-[#e63c80]/10 to-[#c70452]/10 rounded-xl p-4 sm:p-6 mb-6 border border-[#e63c80]/30">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             ${
               normalPrice > salePrice
                 ? `
-              <p class="text-gray-500 line-through text-lg">Precio normal: $${normalPrice.toFixed(
+              <p class="text-[#e0d1ed] line-through text-lg">Precio normal: $${normalPrice.toFixed(
                 2
               )}</p>
-              <p class="text-3xl sm:text-4xl font-bold text-green-600">$${salePrice.toFixed(
+              <p class="text-3xl sm:text-4xl font-bold text-green-400">$${salePrice.toFixed(
                 2
               )}</p>
-              <p class="text-green-700 font-semibold mt-1">¡Ahorras $${savings}!</p>
+              <p class="text-green-300 font-semibold mt-1">¡Ahorras $${savings}!</p>
             `
                 : `
-              <p class="text-3xl sm:text-4xl font-bold text-indigo-600">$${salePrice.toFixed(
+              <p class="text-3xl sm:text-4xl font-bold text-[#f0b9cf]">$${salePrice.toFixed(
                 2
               )}</p>
             `
@@ -396,7 +417,7 @@ function renderGameDetail(game) {
           ${
             discount > 0
               ? `
-            <div class="bg-red-500 text-white font-bold px-6 py-3 rounded-full text-2xl sm:text-3xl self-start sm:self-auto">
+            <div class="bg-gradient-to-r from-[#c70452] to-[#e63c80] text-white font-bold px-6 py-3 rounded-full text-2xl sm:text-3xl self-start sm:self-auto shadow-lg shadow-[#e63c80]/50">
               -${discount}%
             </div>
           `
@@ -406,17 +427,15 @@ function renderGameDetail(game) {
       </div>
       
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-        <div class="bg-gray-50 rounded-lg p-4">
-          <p class="text-sm text-gray-600 mb-1">ID del Juego</p>
-          <p class="font-semibold text-gray-800">${
+        <div class="bg-[#4b004c]/50 rounded-lg p-4 border border-[#e63c80]/20">
+          <p class="text-sm text-[#f0b9cf] mb-1">ID del Juego</p>
+          <p class="font-semibold text-white">${
             game.gameID || game.dealID || "N/A"
           }</p>
         </div>
-        <div class="bg-gray-50 rounded-lg p-4">
-          <p class="text-sm text-gray-600 mb-1">Tienda</p>
-          <p class="font-semibold text-gray-800">${getStoreName(
-            game.storeID
-          )}</p>
+        <div class="bg-[#4b004c]/50 rounded-lg p-4 border border-[#e63c80]/20">
+          <p class="text-sm text-[#f0b9cf] mb-1">Tienda</p>
+          <p class="font-semibold text-white">${getStoreName(game.storeID)}</p>
         </div>
       </div>
       
@@ -425,13 +444,13 @@ function renderGameDetail(game) {
           onclick="window.open('https://www.cheapshark.com/redirect?dealID=${
             game.dealID || game.gameID
           }', '_blank')"
-          class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
+          class="flex-1 bg-gradient-to-r from-[#e63c80] to-[#c70452] hover:from-[#f0b9cf] hover:to-[#e63c80] text-white font-bold py-3 px-6 rounded-lg transition duration-200 shadow-lg shadow-[#e63c80]/30 hover:shadow-[#f0b9cf]/50 hover:scale-105"
         >
           Comprar ahora
         </button>
         <button 
           onclick="closeModal()"
-          class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-6 rounded-lg transition duration-200"
+          class="flex-1 bg-[#4b004c] hover:bg-[#c70452] text-white font-semibold py-3 px-6 rounded-lg transition duration-200"
         >
           Cerrar
         </button>
@@ -443,19 +462,19 @@ function renderGameDetail(game) {
 // Obtener nombre de la tienda
 function getStoreName(storeID) {
   const stores = {
-    "1": "Steam",
-    "2": "GamersGate",
-    "3": "GreenManGaming",
-    "7": "GOG",
-    "8": "Origin",
-    "11": "Humble Store",
-    "13": "Uplay",
-    "15": "Fanatical",
-    "21": "WinGameStore",
-    "23": "GameBillet",
-    "25": "Epic Games Store",
-    "27": "Gamesplanet",
-    "28": "Voidu",
+    1: "Steam",
+    2: "GamersGate",
+    3: "GreenManGaming",
+    7: "GOG",
+    8: "Origin",
+    11: "Humble Store",
+    13: "Uplay",
+    15: "Fanatical",
+    21: "WinGameStore",
+    23: "GameBillet",
+    25: "Epic Games Store",
+    27: "Gamesplanet",
+    28: "Voidu",
   };
   return stores[storeID] || "Tienda desconocida";
 }
@@ -470,21 +489,33 @@ function showLoading(show) {
   if (show) {
     elements.loadingSpinner.classList.remove("hidden");
     elements.gamesGrid.classList.add("hidden");
+    elements.loadMoreContainer.classList.add("hidden");
+    elements.resultsCounter.classList.add("hidden");
   } else {
     elements.loadingSpinner.classList.add("hidden");
     elements.gamesGrid.classList.remove("hidden");
   }
 }
 
-// Mostrar error
-function showError() {
+// Mostrar error con mensaje detallado
+function showError(errorMessage = "Error desconocido") {
   elements.errorMessage.classList.remove("hidden");
   elements.gamesGrid.classList.add("hidden");
+  elements.loadMoreContainer.classList.add("hidden");
+  elements.resultsCounter.classList.add("hidden");
+
+  // Mostrar detalles del error
+  if (elements.errorDetails) {
+    elements.errorDetails.textContent = errorMessage;
+  }
 }
 
 // Ocultar error
 function hideError() {
   elements.errorMessage.classList.add("hidden");
+  if (elements.errorDetails) {
+    elements.errorDetails.textContent = "";
+  }
 }
 
 // Cargar más juegos
@@ -508,8 +539,9 @@ function updateLoadMoreButton() {
     if (appState.currentSort !== "default") {
       activeFilters.push("Ordenado");
     }
-    
-    const filterText = activeFilters.length > 0 ? ` (${activeFilters.join(", ")})` : "";
+
+    const filterText =
+      activeFilters.length > 0 ? ` (${activeFilters.join(", ")})` : "";
     const displayedCount = Math.min(shownGames, totalGames);
     elements.resultsText.textContent = `Mostrando ${displayedCount} de ${totalGames} videojuegos${filterText}`;
   } else {
