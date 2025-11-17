@@ -1,0 +1,21 @@
+{
+  "name": "mi-proyecto-tailwind",
+  "version": "1.0.0",
+  "description": "Proyecto con Tailwind CSS v4.1",
+  "main": "index.js",
+  "scripts": {
+    "build:css": "tailwindcss -i ./src/input.css -o ./public/output.css",
+    "watch:css": "tailwindcss -i ./src/input.css -o ./public/output.css --watch",
+    "dev": "npm run watch:css"
+  },
+  "keywords": [
+    "tailwindcss",
+    "html",
+    "javascript"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tailwindcss": "^4.1.0"
+  }
+}
